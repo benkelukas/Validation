@@ -45,6 +45,10 @@ abstract class FormValidator {
 			$this->getValidationMessages()
 		);
 
+        $this->validation->setAttributeNames(
+            $this->getNamesAttributes()
+        );
+
 		if ($this->validation->fails())
 		{
 			throw new FormValidationException('Validation failed', $this->getValidationErrors());
@@ -77,6 +81,13 @@ abstract class FormValidator {
 		return $this->messages;
 	}
 
+
+    /**
+     * @return array
+     */
+    public function getAttributeNames() {
+        return $this->attributeNames;
+    }
 	/**
 	 * Normalize the provided data to an array.
 	 *
