@@ -46,7 +46,7 @@ abstract class FormValidator {
 		);
 
         $this->validation->setAttributeNames(
-            $this->getNamesAttributes()
+            $this->getAttributeNames()
         );
 
 		if ($this->validation->fails())
