@@ -42,17 +42,7 @@ abstract class FormValidator {
 	{
 		$formData = $this->normalizeFormData($formData);
 
-        $rules            = $this->getValidationRules();
-        $localeRules      = $this->getLocaleValidationRules();
-
-        foreach ( $this->locales as $locale ) {
-            foreach ( $localeRules as $localeRule )
-            {
-                $newLocaleRules[] = $locale . "." . $localeRule;
-            }
-        }
-
-        $mergedRules = array_merge($rules, $localeRules);
+        $mergedRules = $this->mergeRules();
 
         $this->validation = $this->validator->make(
 			$formData,
@@ -127,5 +117,31 @@ abstract class FormValidator {
 		// Otherwise, we'll just stick with what they provided.
 		return $formData;
 	}
+
+    /**
+     * Merges locale and normal rules
+     *
+     * @return array
+     */
+    private function mergeRules ()
+    {
+        $rules       = $this->getValidationRules();
+        $localeRules = $this->getLocaleValidationRules();
+
+        if ( !empty( $localeRules ) )
+        {
+            foreach ( $this->locales as $locale )
+            {
+                foreach ( $localeRules as $field => $localeRule )
+                {
+                    $newLocaleRules[$locale . "." . $field] = $localeRule;
+                }
+            }
+        }
+
+        $mergedRules = array_merge($rules, $localeRules);
+
+        return $mergedRules;
+    }
 
 }
