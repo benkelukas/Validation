@@ -20,12 +20,15 @@ abstract class FormValidator {
 	 */
 	protected $messages = [];
 
+    protected $locales;
+
 	/**
 	 * @param ValidatorFactory $validator
 	 */
 	function __construct(ValidatorFactory $validator)
 	{
 		$this->validator = $validator;
+        $this->locales = \Config::get('app.locales');
 	}
 
 	/**
@@ -39,9 +42,21 @@ abstract class FormValidator {
 	{
 		$formData = $this->normalizeFormData($formData);
 
-		$this->validation = $this->validator->make(
+        $rules            = $this->getValidationRules();
+        $localeRules      = $this->getLocaleValidationRules();
+
+        foreach ( $this->locales as $locale ) {
+            foreach ( $localeRules as $localeRule )
+            {
+                $newLocaleRules[] = $locale . "." . $localeRule;
+            }
+        }
+
+        $mergedRules = array_merge($rules, $localeRules);
+
+        $this->validation = $this->validator->make(
 			$formData,
-			$this->getValidationRules(),
+            $mergedRules,
 			$this->getValidationMessages()
 		);
 
@@ -64,6 +79,10 @@ abstract class FormValidator {
 	{
 		return $this->rules;
 	}
+
+    public function getLocaleValidationRules() {
+        return $this->localeRules;
+    }
 
 	/**
 	 * @return mixed
