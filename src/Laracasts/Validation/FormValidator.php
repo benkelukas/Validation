@@ -67,11 +67,11 @@ abstract class FormValidator {
 	 */
 	public function getValidationRules()
 	{
-		return $this->rules;
+		return isset($this->rules) ? $this->rules : [];
 	}
 
     public function getLocaleValidationRules() {
-        return $this->localeRules;
+        return isset($this->localeRules) ? $this->localeRules : [];
     }
 
 	/**
@@ -95,7 +95,7 @@ abstract class FormValidator {
      * @return array
      */
     public function getAttributeNames() {
-        return $this->attributeNames;
+        return isset($this->attributeNames) ? $this->attributeNames : [];
     }
 	/**
 	 * Normalize the provided data to an array.
@@ -137,9 +137,11 @@ abstract class FormValidator {
                     $newLocaleRules[$locale . "." . $field] = $localeRule;
                 }
             }
+            $mergedRules = array_merge($rules, $newLocaleRules);
+        } else
+        {
+            $mergedRules = $rules;
         }
-
-        $mergedRules = array_merge($rules, $localeRules);
 
         return $mergedRules;
     }
